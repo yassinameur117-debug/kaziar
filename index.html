@@ -128,34 +128,7 @@ async function logout(){try{if(SB)await SB.auth.signOut({scope:'local'})}catch(e
 try{Object.keys(localStorage).filter(k=>k.indexOf('sb-')===0).forEach(k=>localStorage.removeItem(k));if(SB)['docs','soc','pr'].concat(Object.keys(MD).map(k=>'m_'+k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
 try{Object.keys(sessionStorage).filter(k=>k.indexOf('sb-')===0).forEach(k=>sessionStorage.removeItem(k))}catch(e){}
 location.replace(location.pathname)}
-
-async function logout() {
-  try {
-    if (SB) {
-      const { error } = await SB.auth.signOut({ scope: 'local' });
-      if (error) {
-        console.error('Erreur déconnexion:', error);
-      }
-    }
-  } catch (e) {
-    console.error('Erreur déconnexion:', e);
-  }
-
-  try {
-    Object.keys(localStorage)
-      .filter(k => k.startsWith('sb-'))
-      .forEach(k => localStorage.removeItem(k));
-
-    Object.keys(sessionStorage)
-      .filter(k => k.startsWith('sb-'))
-      .forEach(k => sessionStorage.removeItem(k));
-  } catch (e) {
-    console.error(e);
-  }
-
-  location.reload();
-}
-
+  
 document.addEventListener('click', function(e) {
   const a = e.target.closest('#lo');
   if (!a) return;
@@ -163,7 +136,6 @@ document.addEventListener('click', function(e) {
   e.preventDefault();
   logout();
 });
-
 async function startSupa(){
  if(!SUPA_URL||!SUPA_KEY||!window.supabase)return null;
  SB=window.supabase.createClient(SUPA_URL,SUPA_KEY);
