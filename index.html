@@ -127,7 +127,15 @@ let SB=null;
 async function startSupa(){
  if(!SUPA_URL||!SUPA_KEY||!window.supabase)return null;
  SB=window.supabase.createClient(SUPA_URL,SUPA_KEY);
- $('lo').onclick=e=>{e.preventDefault();SB.auth.signOut().then(()=>location.reload())};
+ $('lo').onclick = async (e) => {
+  e.preventDefault();
+  const { error } = await SB.auth.signOut({ scope: 'local' });
+  if (error) {
+    alert('Erreur de déconnexion : ' + error.message);
+    return;
+  }
+  location.reload();
+};
  let {data:{session}}=await SB.auth.getSession();
  if(!session){$('login').style.display='flex';session=await new Promise(res=>{const go=async()=>{$('lerr').textContent='';const {data,error}=await SB.auth.signInWithPassword({email:$('lem').value.trim(),password:$('lpw').value});if(error){$('lerr').textContent='Email ou mot de passe incorrect';return}res(data.session)};$('lg').onclick=go;$('lpw').onkeydown=e=>{if(e.key==='Enter')go()}})}
  $('login').style.display='none';
