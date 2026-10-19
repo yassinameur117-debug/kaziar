@@ -156,6 +156,14 @@ async function logout() {
   location.reload();
 }
 
+document.addEventListener('click', function(e) {
+  const a = e.target.closest('#lo');
+  if (!a) return;
+
+  e.preventDefault();
+  logout();
+});
+
 async function startSupa(){
  if(!SUPA_URL||!SUPA_KEY||!window.supabase)return null;
  SB=window.supabase.createClient(SUPA_URL,SUPA_KEY);
