@@ -161,13 +161,28 @@ document.addEventListener('click', async function(e) {
   if (!a) return;
 
   e.preventDefault();
-  a.style.pointerEvents = 'none';
+  if (a.dataset.busy === '1') return;
+  a.dataset.busy = '1';
 
   try {
     if (SB) {
-      const { error } = await SB.auth.signOut();
+      const { error } = await SB.auth.signOut({ scope: 'local' });
       if (error) throw error;
     }
+
+    for (const storage of [localStorage, sessionStorage]) {
+      Object.keys(storage)
+        .filter(k => k.startsWith('sb-'))
+        .forEach(k => storage.removeItem(k));
+    }
+
+    location.replace(location.pathname + '?logout=' + Date.now());
+  } catch (err) {
+    console.error('Logout error:', err);
+    a.dataset.busy = '0';
+    alert('Échec de déconnexion. Réessayez.');
+  }
+});
 
     location.replace(location.pathname);
   } catch (err) {
