@@ -156,12 +156,25 @@ async function logout() {
   location.reload();
 }
 
-document.addEventListener('click', function(e) {
+document.addEventListener('click', async function(e) {
   const a = e.target.closest('#lo');
   if (!a) return;
 
   e.preventDefault();
-  logout();
+  a.style.pointerEvents = 'none';
+
+  try {
+    if (SB) {
+      const { error } = await SB.auth.signOut();
+      if (error) throw error;
+    }
+
+    location.replace(location.pathname);
+  } catch (err) {
+    console.error('Logout error:', err);
+    a.style.pointerEvents = '';
+    alert('Échec de déconnexion. Réessayez.');
+  }
 });
 
 async function startSupa(){
